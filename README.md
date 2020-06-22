@@ -13,5 +13,4 @@ password "admin!@#"
     pip install pipenv
     pipenv shell
     pip install -r requirements.txt
-    cd foodies_time
     python manage.py runserver
