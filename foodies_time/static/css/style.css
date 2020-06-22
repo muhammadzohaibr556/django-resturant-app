@@ -1,0 +1,94 @@
+body{
+    background: url('../images/front_background.jpg') no-repeat ;
+    background-size: cover;
+    background-attachment: fixed;
+    overflow-x: hidden;
+
+}
+#brand-inner{
+    color:#8DC63F;
+}
+.nav-link:hover{
+    background: #9B0D2F;
+    border-radius: 50px;
+}
+#big-block{
+    margin-top:50px; 
+    
+    position: relative;
+
+}
+#img{
+    position: absolute;
+    top:0;
+    opacity:0.5;
+}
+#inner{
+    position: absolute;
+    top:0;
+    width: 100%;
+}
+#top-block{
+    position:relative;
+    width: 100%;
+    
+}
+#top-block-bg{
+    position: absolute;
+    top:0;
+    height: 85px;
+    width: 100%;
+    position:fixed;
+    
+} 
+#nav{
+    position:absolute;
+    top:0;
+    width: 100% ;
+}
+.navbar{
+    box-shadow: 2px 2px 5px rgb(141, 198, 63);
+    background:rgba(0, 0, 0, 0.7);
+}
+#showcase{
+        position:relative;
+        background: url('../images/nav.png') no-repeat;
+        background-size: cover;
+        height:100%;
+    }
+    #overlay{
+        position:absolute;
+        top: 0;
+        left:0;
+        height:100%;
+        width: 100%;
+    }
+    .container{
+        margin-top:67px;
+        padding-top:20px;
+    }
+    .clspe{
+        background:rgba(155, 13, 47, 0.7);
+        border:2px solid rgb(141, 198, 63);
+    }
+    #link{
+        text-decoration: none;
+        color:white;
+    }
+    #link:hover{
+        text-decoration: none;
+        color:#8DC63F;
+    }
+    #demo1,#demo2,#demo3{
+        padding-top:10px;
+        padding-bottom:10px;
+        background:rgba(155, 13, 47, 0.7);
+        border:2px solid rgb(141, 198, 63);
+    }
+    #bc a{
+        color:white; 
+    }
+.admin-container{
+    background: rgba(155, 13, 47, 0.7);
+    border:2px solid rgb(141, 198, 63);
+}

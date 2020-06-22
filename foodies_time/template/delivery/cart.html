@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">  
+    <div class="row text-white py-4">
+        <div class="col-sm-9 col-md-8">
+            <h4>My Cart</h4>    
+            {% for item in cart %}
+            
+            {% with product=item.product %}
+            <div class="row no-gutters" style="background: rgba(155, 13, 47, 0.7);border:2px solid rgb(141, 198, 63);">
+                <div class="col-4"><a href="{{ product.get_absolute_url }}">
+                        <img class="img-fluid" src="{% if product.photo %}{{ product.photo.url }}{% else %}{% static 'images/no_image.png' %}{% endif %}">
+                    </a></div>
+                <div class="col-8 py-3"><h5>{{ product.title }}</h5>
+                    
+                    <div style="float:left"><span style="font-weight:500">Price</span> {{ item.price }} Rs</div>
+                    <div style="float:right" class="pr-2"><span style="font-weight:500">Total Price</span> {{ item.total_price }} Rs</div>
+                    <br clear="all">
+                        <form style="float:left" class="form-inline" action="{% url 'cart_add' product.id %}" method="post">
+                            {{ item.update_quantity_form.quantity }}
+                            {{ item.update_quantity_form.update }}
+                            <input class="ml-2 btn-sm btn-info" type="submit" value="Update">
+                            {% csrf_token %}
+                        </form>
+                    
+                    <div style="float:right"><a class="btn-sm btn-warning mr-2" href="{% url 'cart_remove' product.id %}">Remove</a></div>
+                <br clear="all">
+                </div>
+            </div>
+            
+        
+        
+        {% endwith %}
+        {% endfor %}
+    </div>
+
+        <div class="col-sm-3 col-md-4">
+            <h4>Price Detail</h4>
+            <table style="background: rgba(155, 13, 47, 0.7);border:2px solid rgb(141, 198, 63);" class="table table-sm table-borderless">
+                <tr>
+                    <td><h5>Cart Total</h5></td>
+                    <td>{{ cart.get_total_price }} <input id="total" type="hidden" value="{{ cart.get_total_price }}"></td>
+                </tr>
+                <tr>
+                    <td><h5>Cart Discount</h5></td>
+                    <td id="dis_td">
+                        
+                    </td>
+                </tr>                    
+                <tr style="border-top: 1px solid white;">
+                    <td><h5>Total</h5></td>
+                    <td id="total_td"></td>
+                </tr>
+            </table>
+            <button class="btn btn-success btn-block {{orderbtn}}" id="order" data-toggle="modal" data-target="#myModal">Order Now</button>
+        </div>
+    </div>
+</div>
+
+      <!-- The Modal -->
+      <div class="modal fade" id="myModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+      
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title text-dark">Your Contact</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+      
+            <!-- Modal body -->
+            <div class="modal-body text-dark">
+                <form action="{% url 'order' %}" method='POST'>
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-4"> Name :</div>
+                        <div class="col-8"><input type="text" class="form-control" required name="nam"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">Phone # :</div>
+                        <div class="col-8"><input type="text" class="form-control" required name="phone"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">Address :</div>
+                        <div class="col-8"><input type="text" class="form-control" required name="address"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">Email Address :</div>
+                        <div class="col-8"><input type="email" class="form-control" required name="email"></div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-4">Postal Code :</div>
+                        <div class="col-8"><input type="text" class="form-control" required name="postal"></div>
+                    </div>
+                    <input type="hidden" value="" id="ttal" name="total">
+                    <div class="form-group row">
+                        <div class="col-4">Branch :</div>
+                        <div class="col-8">
+                            <select class="form-control" name="branch" required>
+                                {% for branh in branch %}
+                                <option value="{{branh.name}}">{{branh.name}} Branch</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
+{% block script %}
+      <script>
+        $("document").ready(function(){
+            var discount = 0;
+            var total = $('#total').val();
+            if (total >=600 && total<1200){
+                discount = total/100*5;
+                total = total-discount;  
+            }
+            if (total >=1200 && total<2000){
+                discount = total/100*6;
+                total = total-discount;  
+            }
+            if (total >=2000){
+                discount = total/100*7;
+                total = total-discount;  
+            }
+            $("#dis_td").append("-"+parseFloat(discount).toFixed(2));
+            $("#total_td").append(parseFloat(total).toFixed(2)+" Rs");
+        })
+
+        $("#order").click(function(){
+            var total = $("#total_td").text();
+            var tl=0;
+            for (i=0; i<total.length; i++){
+                if (total[i] !=" "){
+                    tl +=total[i];
+                }
+                else
+                {break}
+            }
+            $('#ttal').val(parseFloat(tl));
+        })
+      </script>
+{% endblock %}

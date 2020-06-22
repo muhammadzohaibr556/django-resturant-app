@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+        <div class="clspe row text-center text-white no-gutters">
+            <div class="col-md-5 col-sm-4" style="border:1px solid #8DC63F;">
+                <a id="link" class="btn bn" data-toggle="collapse" data-target="#demo1"><h3>Reservation</h3></a>
+            </div>
+            <div class="col-md-7 col-sm-8" style="border:1px solid #8DC63F;">
+                    <h3 style="border-bottom:1px solid #8DC63F;">Home Delivery</h3>
+                <div class="row">
+                    <div class="col-6" style="border-right:1px solid #8DC63F;"><a id="link" class="btn bn" data-toggle="collapse" data-target="#demo2"><h4>Menu</h4></a></div>
+                    <div class="col-6"><a id="link" class="btn bn" data-toggle="collapse" data-target="#demo3"><h4>Deal</h4></a></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-7">
+                <div id="demo1" class="collapse col-md-9 col-lg-8 {{hall}} text-white">
+                    <h5 class="text-center py-2">Hall Reservation</h5>
+                    <form id="reservation" method="POST" action="{% url 'reserve' %}" >
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <select class="form-control" onchange="branchchange()" name="branch" placeholder="Branch">
+                                <option value="">--- Branch ---</option>
+                                {% for bnh in branch %}
+                                    <option value="{{bnh.id}}">
+                                    {{bnh.name}} Branch
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select class="form-control" name="hall" id="hall" placeholder="Hall">
+                                <option value="">--- Hall ---</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="size" name="size" placeholder="Party Size">
+                        </div>
+                        <div class="form-group">
+                            <input type="date" class="form-control" id="date" name="date" placeholder="Date">
+                        </div>
+                        <div class="form-group">
+                            <select name="time" id="time" class="form-control">
+                                <option value="">--- SELECT TIME ---</option>
+                                <option value="09:00am-12:00pm">09:00am-12:00pm</option>
+                                <option value="12:30pm-03:00pm">12:30pm-03:00pm</option>
+                                <option value="04:00pm-06:00pm">04:00pm-06:00pm</option>
+                                <option value="07:00pm-10:00pm">07:00pm-10:00pm</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            {% for meal in hallmeal %}
+                            <div class="col-4 form-group">
+                                <input type="radio" name="meal"  value="{{meal.id}}"> {{meal.meal_type}}
+                                <input type="hidden" id="mealcharges{{meal.id}}" value="{{meal.charges_per_head}}">
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="y_name" name="y_name" placeholder="Your Name">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone #">
+                        </div>
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                        </div>
+                        <input type="hidden" value="" id="charges" name="charges">
+                        <div class="row">
+                        <div class="col-3 col-md-4"><button type="submit" class="btn btn-primary btn-block">Submit</button></div> 
+                        <div class="col-9 col-md-8 text-right" id="estimated"></div>
+                        </div>
+                    </form>
+                </div>
+                <div id="demo2" class="collapse text-white {{meal}}">
+                    <h5 class="text-center">Menu</h5>
+                    {% if item %}
+                    {% for list in item %}
+                    {% if list.category == 'Meal' %}
+                    <div class="row">
+                        <div class="col-3"><img class="img-fluid img-thumbnail" src="{{list.photo.url}}" alt=""></div>
+                        <div class="col-7">{{list.title}}
+                            <form class="form-inline" action="{% url 'cart_add_home' list.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group"> Quantity :&nbsp; {{ cart_product_form.quantity }}</div>
+                                <button id="btn" class="btn btn-secondary ml-auto"><span class="fa fa-shopping-cart"></span></button>
+                            </form>
+                        </div>
+                        <div class="col-2">
+                            <p>{{list.price}} Rs.</p>
+                           
+                            
+                        </div>
+                    </div>
+                    <div class="mx-3 my-2" style="border:1px solid white;"></div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div> 
+                <div id="demo3" class="collapse text-white {{deal}}">
+                    <h5 class="text-center">Deal</h5>
+                    {% if item %}
+                    {% for list in item %}
+                    {% if list.category == 'Deal' %}
+                    <div class="row">
+                        <div class="col-3"><img class="img-fluid img-thumbnail" src="{{list.photo.url}}" alt=""></div>
+                        <div class="col-7">{{list.title}}
+                            <form class="form-inline" action="{% url 'cart_add_home' list.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="form-group"> Quantity :&nbsp; {{ cart_product_form.quantity }}</div>
+                                <button class="btn btn-secondary ml-auto" href="#"><span class="fa fa-shopping-cart"></span></button>
+                            </form>
+                        </div>
+                        <div class="col-2">
+                            <p>{{list.price}} Rs.</p>
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="mx-3 my-2" style="border:1px solid white;"></div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-5 text-white">
+                {% with total_items=cart|length %}
+                    
+                    <div class="my-2 text-center" style="background: rgba(155, 13, 47, 0.7);border:2px solid rgb(141, 198, 63);">
+                    {% if cart|length > 0 %}
+                        Your cart:
+                        <a href="{% url 'cart_detail' %}" style="color:white">
+                            {{total_items}} item{{ total_items|pluralize }}, ${{ cart.get_total_price }}
+                        </a>
+                    {% else %}
+                    Your cart is empty.
+                    {% endif %}
+                    </div>
+                    
+                 {% endwith %}
+                <div id="item1" >
+                    {% for item in cart %}
+        
+                    {% with product=item.product %}
+                    <div class="p-2" style="background: rgba(155, 13, 47, 0.7);border:2px solid rgb(141, 198, 63);">
+                    <h5>{{ product.title}}</h5>
+                    <div class="row no-gutters">
+                        <div class="col-6"><span style="font-weight:500">Price</span> {{ item.price }} Rs</div>
+                        <div class="col-6 text-right"><span style="font-weight:500">Total Price</span> {{ item.total_price }} Rs<br></div>
+                    </div>
+                    <div class="row no-gutters">
+                        <div class="col-6">
+                            <form class="form-inline" action="{% url 'cart_add_home' product.id %}" method="post">
+                                <div class="form-group"> Quantity :&nbsp; {{ item.update_quantity_form.quantity }}</div>
+                                {{ item.update_quantity_form.update }}
+                                <input class="ml-2 btn-block btn-sm btn-info mt-2" type="submit" value="Update">
+                                {% csrf_token %}
+                            </form>
+                        </div>
+                        <div class="col-6 text-right"><a class="btn-sm btn-warning mr-2" href="{% url 'cart_remove_home' product.id %}">Remove</a></div>
+                    </div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}    
+                </div>    
+            </div>
+        </div>
+    </div>
+    <script>
+
+    </script>
+    {% endblock %}
+    {% block script %}
+    {% endblock %}
